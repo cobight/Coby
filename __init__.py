@@ -380,7 +380,7 @@ class Application(Application_ui):
 
 def Media(ev,url):
     try:
-        CHUNK = 1024  # 我把它理解为缓冲流
+        CHUNK = 1024*3  # 我把它理解为缓冲流
         wf = wave.open(url, 'rb')
         p = pyaudio.PyAudio()
         stream = p.open(format=p.get_format_from_width(wf.getsampwidth()),
