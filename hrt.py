@@ -89,39 +89,65 @@ class heartPack:
         return False
     def get_disis_to_songlist(self):
         self.songlist = []
-        if  len(self.disslists) != 0:
+        if len(self.disslists) != 0:
             for item in self.disslists:
+                #print(item['tid'])
                 jsn = Mjson()
                 jsn.loads(self.send(
-                    "https://c.y.qq.com/qzone/fcg-bin/fcg_ucc_getcdinfo_byids_cp.fcg?type=1&json=1&utf8=1&onlysong=0&new_format=1&disstid=" + str(
+                    "https://c.y.qq.com/qzone/fcg-bin/fcg_ucc_getcdinfo_byids_cp.fcg?type=1&json=1&utf8=1&onlysong=1&nosign=1&new_format=1&ctx=1&disstid=" + str(
                         item[
-                            'tid']) + "&g_tk=764277635&loginUin="+self.uin+"&hostUin=0&format=json&inCharset=utf8&outCharset=utf-8&notice=0&platform=yqq.json&needNewCode=0&song_begin=0"))
-                lis = (jsn.reads("cdlist[0].songlist"))
+                            'tid']) + "&_=1586421661784&g_tk_new_20200303=1191317329&g_tk=1191317329&loginUin=" + self.uin + "&hostUin=0&format=json&inCharset=utf8&outCharset=utf-8&notice=0&platform=yqq.json&needNewCode=0"))
+
+                lis = (jsn.reads("songlist"))
+                print(lis)
                 self.songlist.append(lis)
             return True
         return False
-                # print(len(lis))
-                # print(item['diss_name'],item['tid'],item['song_cnt'],item['listen_num'])
     def getSong_url(self, songmid):
-        print(self.cookie)
-        if self.cookie == None:
-            sendURL = "http://u.y.qq.com/cgi-bin/musicu.fcg?g_tk=1115100142&format=json&data=%7B%22comm%22%3A%7B%22ct%22%3A23%2C%22cv%22%3A0%7D%2C%22url%5Fmid%22%3A%7B%22module%22%3A%22vkey.GetVkeyServer%22%2C%22method%22%3A%22CgiGetVkey%22%2C%22param%22%3A%7B%22guid%22%3A%22649357301%22%2C%22songmid%22%3A%5B%22" + songmid + "%22%5D%2C%22songtype%22%3A%5B0%5D%2C%22uin%22%3A%220%22%2C%22loginflag%22%3A1%2C%22platform%22%3A%2223%22%7D%7D%7D&_=1527829250224"
-            mj = Mjson()
-            mj.loads(self.send(sendURL))
-            msg = mj.reads("url_mid.data.midurlinfo[0].purl")
-            return msg
-        else:#扫码登陆有cookie
-            sendurl="https://u.y.qq.com/cgi-bin/musicu.fcg?data={%22url_mid%22:{%22module%22:%22vkey.GetVkeyServer%22,%22method%22:%22CgiGetVkey%22,%22param%22:{%22guid%22:%226936663186%22,%22songmid%22:[%22" +songmid+ "%22],%22songtype%22:[0],%22uin%22:%22"+self.uin+"%22,%22platform%22:%2223%22}}}"
-            mj = Mjson()
-            mj.loads(self.sendck(sendurl))
-            msg = mj.reads("url_mid.data.midurlinfo[0].purl")
-            return msg
+        try:
+            #print(self.cookie)
+            if self.cookie == None:
+                sendURL = "http://u.y.qq.com/cgi-bin/musicu.fcg?g_tk=1115100142&format=json&data=%7B%22comm%22%3A%7B%22ct%22%3A23%2C%22cv%22%3A0%7D%2C%22url%5Fmid%22%3A%7B%22module%22%3A%22vkey.GetVkeyServer%22%2C%22method%22%3A%22CgiGetVkey%22%2C%22param%22%3A%7B%22guid%22%3A%22649357301%22%2C%22songmid%22%3A%5B%22" + songmid + "%22%5D%2C%22songtype%22%3A%5B0%5D%2C%22uin%22%3A%220%22%2C%22loginflag%22%3A1%2C%22platform%22%3A%2223%22%7D%7D%7D&_=1527829250224"
+                mj = Mjson()
+                mj.loads(self.send(sendURL))
+                msg = mj.reads("url_mid.data.midurlinfo[0].purl")
+                return msg
+            else:#扫码登陆有cookie
+                print('cookie')
+                sendurl = 'https://u.y.qq.com/cgi-bin/musicu.fcg?data={%22url_mid%22:{%22module%22:%22vkey.GetVkeyServer%22,%22method%22:%22CgiGetVkey%22,%22param%22:{%22guid%22:%2262736986%22,%22songmid%22:[%22'+songmid+'%22],%22songtype%22:[0],%22uin%22:%221415470614%22,%22platform%22:%2223%22}}}&platform=yqq&g_tk=1191317329'
+
+                mj = Mjson()
+                retn=self.sendck(sendurl)
+                mj.loads(retn)
+                print(retn)
+                msg = mj.reads("url_mid.data.midurlinfo[0].purl")
+                print('msg',msg)
+                if msg=='':
+                    msg=self.getSong_url2(songmid)
+                return msg
+        except Exception as e:
+            pass
+            return None
+    def getSong_url2(self,songmid):
+        try:
+            if songmid != '':
+                print('songmid',songmid)
+                curl = 'https://u.y.qq.com/cgi-bin/musics.fcg?-=getplaysongvkey7092025519019529&g_tk=1191317329&sign=zza1l7vla548597agd47256308d9cc9922d5be410c35f5094&loginUin=1415470614&hostUin=0&format=json&inCharset=utf8&outCharset=utf-8&notice=0&platform=yqq.json&needNewCode=0&data=%7B%22req%22%3A%7B%22module%22%3A%22CDN.SrfCdnDispatchServer%22%2C%22method%22%3A%22GetCdnDispatch%22%2C%22param%22%3A%7B%22guid%22%3A%224853433532%22%2C%22calltype%22%3A0%2C%22userip%22%3A%22%22%7D%7D%2C%22req_0%22%3A%7B%22module%22%3A%22vkey.GetVkeyServer%22%2C%22method%22%3A%22CgiGetVkey%22%2C%22param%22%3A%7B%22guid%22%3A%224853433532%22%2C%22songmid%22%3A%5B%22'+songmid+'%22%5D%2C%22songtype%22%3A%5B0%5D%2C%22uin%22%3A%221415470614%22%2C%22loginflag%22%3A1%2C%22platform%22%3A%2220%22%7D%7D%2C%22comm%22%3A%7B%22uin%22%3A1415470614%2C%22format%22%3A%22json%22%2C%22ct%22%3A24%2C%22cv%22%3A0%7D%7D'
+
+                retn = self.sendck(curl)
+                print(retn)
+                mjson=Mjson()
+                mjson.loads(retn)
+                return 'http://ws.stream.qqmusic.qq.com/' + mjson.reads('url_mid.data.midurlinfo[0].purl')
+        except Exception as e:
+            pass
+        return None
     def _issongcanplay(self,acs):
         #print(acs)
         lis = list(bin(acs)[2:])
         lis.pop()
         lis.reverse()
-        print(lis)
+        #print(lis)
         if len(lis) > 3:
             if (lis[0] == '1') or (lis[1] == '1') or (lis[2] == '1'):
                 return True
@@ -261,9 +287,10 @@ def getmsguin(text):
     uin=re.search("uin=o(.*?); ",text)
     return uin.groups()[0]
 if __name__ =='__main__':
-    srch=(heartSrch("我继续"))
-    retn=srch.getpage()
-    print((retn))
+    # srch=(heartSrch("我继续"))
+    # retn=srch.getpage()
+    # print((retn))
+    pakc=heartPack('1415470614')
 
 
 

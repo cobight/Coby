@@ -380,7 +380,7 @@ class Application(Application_ui):
 
 def Media(ev,url):
     try:
-        CHUNK = 1024*3  # 我把它理解为缓冲流
+        CHUNK = 1024*2  # 我把它理解为缓冲流
         wf = wave.open(url, 'rb')
         p = pyaudio.PyAudio()
         stream = p.open(format=p.get_format_from_width(wf.getsampwidth()),
@@ -391,6 +391,7 @@ def Media(ev,url):
         while ev.isSet()==False and  data != '':  # 直到音频放完
             stream.write(data)  # 播放缓冲流的音频
             data = wf.readframes(CHUNK)  # 更新data
+            print(wf.tell())
             numpydata = np.fromstring(data, dtype=np.int16)#把data由字符串以十六进制的方式转变为数组
             transforamed=np.real(np.fft.fft(numpydata))#傅里叶变换获取实数部分
             count=32#设置间隔区
@@ -424,7 +425,7 @@ def qrshow(hwnd1,hwnd2,hwnd3):
         x = ctypes.string_at(dll.e_openwindow(hwnd2))
         keycook = x.decode('utf-8')
         uin=Coby.hrt.getmsguin(keycook)
-
+        print(keycook)
         ap.hrt=Coby.hrt.heartPack(uin)
         ap.hrt.cookie = keycook
         ap.jpLoginn()
