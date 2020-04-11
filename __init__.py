@@ -249,6 +249,7 @@ class Application(Application_ui):
             self.hrt=Coby.hrt.heartPack(num)
             jsn=Coby.hrt.Mjson()
             jsn.loads(msg)
+            self.hrt.uin=num
             self.hrt.disslists=jsn.reads("diss")
             self.hrt.songlist=jsn.reads("song")
             self.freashdis()
