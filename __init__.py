@@ -459,7 +459,6 @@ def cha(hwnd,lparam):
     if lock!=None and lock:
         name=win32gui.GetClassName(hwnd)
         if name=='WorkerW':
-            rere=None
             rere=win32gui.FindWindowEx(hwnd,0,u'SHELLDLL_DefView',None)
             if rere!=0:
                 lock=None
