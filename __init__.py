@@ -83,8 +83,9 @@ class Application_ui(Frame):
         self.Fly=Frame(self.top_Frame)
         Flycanvas=Canvas(self.Fly,background='#f0f0f0')
         print("fly",int(Flycanvas.winfo_id()))
+        self.Fly.place(relx=0, rely=0, height=GetSystemMetrics(1),width=GetSystemMetrics(0))
         Flycanvas.place(relx=0,rely=0,height=GetSystemMetrics(1),width=GetSystemMetrics(0))
-        self.Fly.place(relx=0.005, rely=0.03, relwidth=1, relheight=0.85)
+
         Flycanvas.update()
         for x in range(258):
             Flycanvas.create_rectangle(7 * x+2, 0, 7 * x + 2, 0)
