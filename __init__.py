@@ -81,7 +81,8 @@ class Application_ui(Frame):
     def createFly(self):
         global Flycanvas
         self.Fly=Frame(self.top_Frame)
-        Flycanvas=Canvas(self.Fly,background='pink')
+        Flycanvas=Canvas(self.Fly,background='red')
+        print("fly",int(Flycanvas.winfo_id()))
         Flycanvas.place(relx=0,rely=0,height=GetSystemMetrics(1),width=GetSystemMetrics(0))
         self.Fly.place(relx=0.005, rely=0.03, relwidth=1, relheight=0.85)
         Flycanvas.update()
@@ -232,7 +233,8 @@ class Application(Application_ui):
 
     def qrshow(self):
         try:
-            t=threading.Thread(target=qrshow,args=(self.Fly.winfo_id(),self.TabStrip1__Tab2.winfo_id(),self.winfo_toplevel().winfo_id()))
+            global Flycanvas
+            t=threading.Thread(target=qrshow,args=(Flycanvas.winfo_id(),self.TabStrip1__Tab2.winfo_id(),self.winfo_toplevel().winfo_id()))
             t.setDaemon(True)
             t.start()
         except Exception as e:
@@ -439,12 +441,13 @@ def hidetittle(hwnd=0):#隐藏标题栏但不会隐藏任务栏,代替self.maste
     user32.SetWindowLongA(fhwnd,-16,369229824)
 def hideFrame(hwnd=0):
     global user32
+
     cs=user32.GetWindowLongA(hwnd,-20)
     cs=(cs|32)|524288
     user32.SetWindowLongA(hwnd,-20,cs)#鼠标穿透
     cs2=(240+240*256+240*256*256)#RGB
-    user32.SetLayeredWindowAttributes(hwnd,cs2,255,3)#(窗口句柄,透明色,透明度,fuc代码)
-    #print("shadowcanvas",hwnd)
+    user32.SetLayeredWindowAttributes(hwnd,255,255,3)#(窗口句柄,透明色,透明度,fuc代码)
+    # print("shadowcanvas",hwnd)
 def zmh(ckjb):
     global user32,Flycanvas
     zmjb = win32gui.FindWindow("Progman", "Program Manager")
